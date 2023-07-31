@@ -362,19 +362,27 @@
                 <div class="col-md-6 form-group mt-3 mt-md-0">
                   <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
                 </div>
+                <div>
+                  <input id="gender" type="radio" name="gender" required value="Male">
+                  <label class="col-3 gender">Male</label>
+                  <input id="gender" type="radio" name="gender" required value="Female">
+                  <label class="col-3 gender">Female</label>
+                  <input id="gender" type="radio" name="gender" required value="Other">
+                  <label class="col-3 gender">Other</label>
+                </div>
               </div>
               <div class="form-group mt-3">
                 <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
               </div>
               <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+                <textarea class="form-control" name="message" rows="5" id="message" placeholder="Message" required></textarea>
               </div>
               <div class="my-3">
                 <div class="loading">Loading</div>
                 <div class="error-message"></div>
                 <div class="sent-message">Your message has been sent. Thank you!</div>
               </div>
-              <div class="text-center"><button type="submit">Send Message</button></div>
+              <div class="text-center"><button onclick="validateForm()" type="submit">Send Message</button></div>
             </form>
 
           </div>
@@ -415,25 +423,58 @@
   <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="main.js"></script>
   <script>
-    $("#submit-form").submit((e)=>{
-        e.preventDefault()
-        $.ajax({
-            url:"https://script.google.com/macros/s/AKfycby10Nm1_8ultDciPccB661QuqYXATrNDY6T8VgZxqkO87-DPXMzsb1hFVhrslH-qOJK/exec",
-            data:$("#submit-form").serialize(),
-            method:"post",
-            success:function (response){
-                alert("Form submitted successfully")
-                window.location.reload().href="#hero"
-            },
-            error:function (err){
-                alert("Something Error")
-
-            }
-        })
-    })
-</script>
+    $("#submit-form").submit(function(e) {
+      e.preventDefault();
+  
+      // Validate the form fields and set the validation status using a boolean flag
+      var isValid = validateForm();
+      if (!isValid) {
+        return;
+      }
+  
+      $.ajax({
+        url: "https://script.google.com/macros/s/AKfycby10Nm1_8ultDciPccB661QuqYXATrNDY6T8VgZxqkO87-DPXMzsb1hFVhrslH-qOJK/exec",
+        data: $("#submit-form").serialize(),
+        method: "post",
+        success: function(response) {
+          alert("Form submitted successfully");
+          window.location.reload().href ="#hero" // Use href to navigate to the anchor
+        },
+        error: function(err) {
+          alert("Something Error");
+        }
+      });
+    });
+  
+    function validateForm() {
+      var name = $("#name").val();
+      var email = $("#email").val();
+      var subject = $("#subject").val();
+      var message = $("#message").val();
+      var gender = $("#gender").val();
+  
+      // Set the validation status using a boolean flag
+      var isValid = true;
+  
+      if (name.trim() === '' || email.trim() === '' || subject.trim() === '' || message.trim() === ''|| gender.trim() === '') {
+        alert("Please fill out all fields.");
+        isValid = false;
+      }
+  
+      // Email validation
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Please enter a valid email address.");
+        isValid = false;
+      }
+  
+      return isValid;
+    }
+  </script>
+  
 </body>
 
 </html>
